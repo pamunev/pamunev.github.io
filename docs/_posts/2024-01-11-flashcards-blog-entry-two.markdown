@@ -11,7 +11,7 @@ Now the decks are listed where they should be, and each one of them says it has 
 
 I need to make adjustments, but the way I achieved it (after some research) was this:
 
-I created a utility function that used lodash and maps out the properties of an object in a certain way. It’s called map-properties.js and looks like this:
+I created a utility function that uses lodash and maps out the properties of an object in a certain way. It’s called map-properties.js and looks like this:
 
 {% highlight ruby %}
 const lodash = require("lodash");
