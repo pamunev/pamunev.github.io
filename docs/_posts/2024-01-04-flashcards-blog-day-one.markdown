@@ -37,6 +37,9 @@ it returned an array that looked like this:
 Whew. An array. At least it was an array.
 
 Now that the “list” function looks like this:
+{% highlight ruby %}
+
+{% endhighlight %}
 
 Oh, wait. You know what? I had forgotten to restart the back-end! Now that I did, it’s kind of working.
 
@@ -70,3 +73,5 @@ return data.map((deckData) => addCards(deckData));
 Now, my front-end is not showing any errors. It’s showing three decks with the same name and description – one per card in that deck. Then a fourth deck with the single card that belongs to deck 2.
 
 My next step is figuring out how to make those 3 decks be only 1 deck with all 3 cards within it.
+
+The "cards" key should also return an array, upon which the .length method can be used.

@@ -1,0 +1,63 @@
+<p>I’ve decided to start a blog documenting my progress on an API I’m building for a front-end project that I have (flashcards for studying).</p>
+
+<p>I’m starting it because I’ve been working on it for a while now, and I feel like I’m learning new things every work session, so I want to have a log of it so that I can come back and learn things better.</p>
+
+<p>There’s too much I’ve learned, and too much of this journey I’ve already traversed with this project, so I’m not going to try to recap all of it right now. I’ll just start with where I’m at currently.</p>
+
+<p>Today I tried to get my “list” knex function in my decks.service.js file to return the decks in my database (including the id, name, and description of each deck), along with a “cards” key for each deck.
+My cards table is associated with my decks via a foreign key called deckId. Thus, the columns in my cards table are: id, front, back, and deckId.</p>
+
+<p>I found a lesson in my Thinkful curriculum about joining tables with Knex (I remembered I had learned about it at some point), and I adjusted my “list” function according to what the lesson said. One of the key parts of this lesson was to create a utility function called mapProperties, and they provided code for me to use.</p>
+
+<p>However, these instructions were for an exercise where we were trying to get a “products” table that had a “supplier_id” foreign key, and join the supplier_id info, so that all of that would be returned. In other words, return each product with their corresponding supplier information (a many to one relationship).</p>
+
+<p>This isn’t working for my project, and I’ll explain my hypotheses regarding why, but first I’ll describe what’s being returned when I call the “list” function: an object containing other objects. These other objects are each a card, and they include information about the deck they belong to, and about the card itself. Therefore, I’m receiving 4 objects within this general object, since I have 4 cards in my database (I have 2 decks).</p>
+
+<p>I need the list function to return an ARRAY (so that I can later use the .map method on it) of decks, with all the keys that a deck usually has, plus a “cards” key. Each “cards” key should contain the cards within that deck. Whether I want that to be an object or an array, I’m not sure right now.</p>
+
+<p>Before today, when the “list” function looked like this:</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">function</span> <span class="n">list</span><span class="p">()</span> <span class="p">{</span>
+<span class="k">return</span> <span class="n">knex</span><span class="p">(</span><span class="s2">"decks as d"</span><span class="p">).</span><span class="nf">select</span><span class="p">(</span><span class="s2">"</span><span class="se">\*</span><span class="s2">"</span><span class="p">);</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>it returned an array that looked like this:</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="p">[{</span><span class="ss">id: </span><span class="mi">2</span><span class="p">,</span> <span class="ss">name: </span><span class="s1">'second deck'</span><span class="p">,</span> <span class="ss">description: </span><span class="s1">'second description'</span><span class="p">},</span> <span class="p">{</span><span class="ss">id: </span><span class="mi">1</span><span class="p">,</span> <span class="ss">name: </span><span class="s1">'Testing'</span><span class="p">,</span> <span class="ss">description: </span><span class="s1">'test description'</span><span class="p">}]</span></code></pre></figure>
+
+<p>Whew. An array. At least it was an array.</p>
+
+<p>Now that the “list” function looks like this:</p>
+
+<p>Oh, wait. You know what? I had forgotten to restart the back-end! Now that I did, it’s kind of working.</p>
+
+<p>Good lesson to learn! Always restart the back-end to see the changes you just made there.</p>
+
+<p>Here’s what happened:
+Earlier today, the “list” function looked like this:</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">function</span> <span class="n">list</span><span class="p">()</span> <span class="p">{</span>
+<span class="k">return</span> <span class="n">knex</span><span class="p">(</span><span class="s2">"decks as d"</span><span class="p">)</span>
+<span class="p">.</span><span class="nf">leftJoin</span><span class="p">(</span><span class="s2">"cards as c"</span><span class="p">,</span> <span class="s2">"d.id"</span><span class="p">,</span> <span class="s2">"c.deckId"</span><span class="p">)</span>
+<span class="p">.</span><span class="nf">select</span><span class="p">(</span><span class="s2">"d._"</span><span class="p">,</span> <span class="s2">"c._"</span><span class="p">)</span>
+<span class="p">.</span><span class="nf">then</span><span class="p">(</span><span class="n">addCards</span><span class="p">);</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>It was returning an object with several other objects representing cards, like I said before.</p>
+
+<p>Now, the “list” function looks like this:</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">function</span> <span class="n">list</span><span class="p">()</span> <span class="p">{</span>
+<span class="k">return</span> <span class="n">knex</span><span class="p">(</span><span class="s2">"decks as d"</span><span class="p">)</span>
+<span class="p">.</span><span class="nf">leftJoin</span><span class="p">(</span><span class="s2">"cards as c"</span><span class="p">,</span> <span class="s2">"d.id"</span><span class="p">,</span> <span class="s2">"c.deckId"</span><span class="p">)</span>
+<span class="p">.</span><span class="nf">select</span><span class="p">(</span><span class="s2">"d._"</span><span class="p">,</span> <span class="s2">"c._"</span><span class="p">)</span>
+<span class="p">.</span><span class="nf">then</span><span class="p">((</span><span class="n">data</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+<span class="k">return</span> <span class="n">data</span><span class="p">.</span><span class="nf">map</span><span class="p">((</span><span class="n">deckData</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="n">addCards</span><span class="p">(</span><span class="n">deckData</span><span class="p">));</span>
+<span class="p">});</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>Now, my front-end is not showing any errors. It’s showing three decks with the same name and description – one per card in that deck. Then a fourth deck with the single card that belongs to deck 2.</p>
+
+<p>My next step is figuring out how to make those 3 decks be only 1 deck with all 3 cards within it.</p>
+
+<p>The “cards” key should also return an array, upon which the .length method can be used.</p>
