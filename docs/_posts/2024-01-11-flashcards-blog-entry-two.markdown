@@ -1,7 +1,7 @@
 ---
 layout: post
-title: "Flashcards Blog Day One"
-date: 2024-01-04 23:47:25 -0600
+title: "Flashcards Blog Entry Two"
+date: 2024-01-11 15:29:25 -0600
 categories: blog post
 ---
 
